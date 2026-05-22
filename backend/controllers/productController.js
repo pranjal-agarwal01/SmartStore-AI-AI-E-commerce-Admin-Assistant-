@@ -24,6 +24,11 @@ const getProduct = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const { name, category, price, stock, description, image } = req.body;
+
+    if (!name || !category || price === undefined) {
+      return res.status(400).json({ message: 'Please provide name, category and price' });
+    }
+
     const product = await Product.create({
       user: req.user._id,
       name,
