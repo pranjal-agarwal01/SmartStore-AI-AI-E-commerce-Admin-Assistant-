@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FiPlus, FiEdit2, FiTrash2, FiX } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch } from 'react-icons/fi';
 
 const emptyForm = { name: '', category: '', price: '', stock: '', description: '', image: '' };
 
@@ -11,6 +11,8 @@ export default function Products() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
 
   useEffect(() => {
     fetchProducts();
@@ -84,6 +86,14 @@ export default function Products() {
     );
   }
 
+  const categories = [...new Set(products.map(p => p.category))];
+
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = !filterCategory || p.category === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -96,6 +106,31 @@ export default function Products() {
         </button>
       </div>
 
+      {products.length > 0 && (
+        <div className="flex gap-3 mb-5">
+          <div className="relative flex-1 max-w-xs">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+            />
+          </div>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+          >
+            <option value="">All Categories</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {products.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl shadow-sm">
           <FiBox className="mx-auto text-gray-300" size={48} />
@@ -103,7 +138,7 @@ export default function Products() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div key={product._id} className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-3">
                 <div>
