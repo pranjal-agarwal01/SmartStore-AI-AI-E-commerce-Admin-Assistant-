@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 
@@ -73,7 +74,7 @@ const getDashboardStats = async (req, res) => {
       const daySales = await Sale.aggregate([
         {
           $match: {
-            user: req.user._id,
+            user: new mongoose.Types.ObjectId(req.user._id),
             createdAt: { $gte: date, $lt: nextDate },
           },
         },

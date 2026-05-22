@@ -29,12 +29,16 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const [statsRes, suggestionsRes] = await Promise.all([
+      const [statsRes, suggestionsRes] = await Promise.allSettled([
         axios.get('/api/sales/dashboard'),
         axios.get('/api/ai/suggestions'),
       ]);
-      setStats(statsRes.data);
-      setSuggestions(suggestionsRes.data.suggestions);
+      if (statsRes.status === 'fulfilled') {
+        setStats(statsRes.value.data);
+      }
+      if (suggestionsRes.status === 'fulfilled') {
+        setSuggestions(suggestionsRes.value.data.suggestions);
+      }
     } catch (error) {
       console.error('Failed to load dashboard:', error);
     } finally {

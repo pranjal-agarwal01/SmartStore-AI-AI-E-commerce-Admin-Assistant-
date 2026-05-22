@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch, FiBox } from 'react-icons/fi';
 
 const emptyForm = { name: '', category: '', price: '', stock: '', description: '', image: '' };
 
